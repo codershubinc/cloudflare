@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="refresh" content="15" />
+  <title>503 // Tunnel Disconnected</title>
+  <style>
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+    }
+
+    .terminal {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      max-width: 540px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    .bar {
+      background: #21262d;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .circle {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .r {
+      background: #ff5f56;
+    }
+
+    .y {
+      background: #ffbd2e;
+    }
+
+    .g {
+      background: #27c93f;
+    }
+
+    .title {
+      margin-left: 8px;
+      font-size: 0.75rem;
+      color: #8b949e;
+    }
+
+    .content {
+      padding: 1.5rem;
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+
+    .cmd {
+      color: #58a6ff;
+    }
+
+    .err {
+      color: #f85149;
+      font-weight: bold;
+    }
+
+    .warn {
+      color: #d29922;
+    }
+
+    .muted {
+      color: #8b949e;
+      font-size: 0.78rem;
+      margin-top: 1.5rem;
+      border-top: 1px dashed #30363d;
+      padding-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="terminal">
+    <div class="bar">
+      <div class="circle r"></div>
+      <div class="circle y"></div>
+      <div class="circle g"></div>
+      <span class="title">cloudflared — quazaar-sync</span>
+    </div>
+    <div class="content">
+      <div><span class="cmd">$</span> curl -I https://quazaar-sync.codershubinc.com</div>
+      <div><span class="err">HTTP/2 1033 (Cloudflare Tunnel Error)</span></div>
+      <br />
+      <div><span class="warn">[WARN]</span> Upstream daemon is currently unreachable.</div>
+      <div>The host machine or tunnel service is offline. This page will automatically retry every 15 seconds.</div>
+
+      <div class="muted">
+        ::CLOUDFLARE_ERROR_1000S_BOX::
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
