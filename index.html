@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quazaar Sync — Tunnel Status</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #08090d;
+    }
+    #tunnelFrame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="tunnelFrame" title="Quazaar Tunnel Error Template"></iframe>
+
+  <script>
+    (function () {
+      const TOTAL_TEMPLATES = 8; // 0 to 7
+      const randomIdx = Math.floor(Math.random() * TOTAL_TEMPLATES);
+      const frame = document.getElementById('tunnelFrame');
+      frame.src = 'tunnel/synker/not_running_' + randomIdx + '.html';
+    })();
+  </script>
+</body>
+</html>

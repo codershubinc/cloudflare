@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <noscript>
+    <meta http-equiv="refresh" content="15" />
+  </noscript>
+  <title>Quazaar Sync — Offline</title>
+  <style>
+    :root {
+      --bg: #05070a;
+      --bento-bg: #0d121c;
+      --bento-border: rgba(255, 255, 255, 0.07);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .bento-container {
+      max-width: 520px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Bento Grid Cells */
+    .bento-cell {
+      background: var(--bento-bg);
+      border: 1px solid var(--bento-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Top Main Box */
+    .hero-cell {
+      padding: 2.25rem 2rem 1.75rem;
+      text-align: center;
+    }
+
+    .pulse-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+      color: #ffffff;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    /* 2-Column Middle Row */
+    .bento-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .mini-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.25rem;
+    }
+
+    .mini-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .mini-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .mini-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Bottom Action Cell */
+    .action-cell {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-bento {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      border: none;
+      width: 100%;
+      padding: 0.95rem;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      transition: all 0.2s ease;
+    }
+
+    .btn-bento:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-bento.loading svg {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .cf-row {
+      text-align: center;
+      font-size: 0.73rem;
+      color: var(--text-dim);
+      padding-top: 0.5rem;
+    }
+
+    .cf-box {
+      font-family: ui-monospace, monospace;
+      margin-top: 4px;
+      font-size: 0.7rem;
+    }
+
+    .cf-box * {
+      color: inherit !important;
+      font-size: inherit !important;
+      background: transparent !important;
+      border: none !important;
+    }
+
+    @media (max-width: 480px) {
+      .bento-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bento-container">
+    <!-- Main Hero Cell -->
+    <div class="bento-cell hero-cell">
+      <div class="pulse-badge">
+        <span class="pulse-dot"></span>
+        Idle Standby
+      </div>
+      <h1>Quazaar Sync is Resting</h1>
+      <p>
+        The origin service is currently spun down to conserve resources. It will wake up as soon as a connection is received.
+      </p>
+    </div>
+
+    <!-- 2 Bento Metric Cells -->
+    <div class="bento-row">
+      <div class="bento-cell mini-card">
+        <div class="mini-label">Service Status</div>
+        <div class="mini-val" style="color: #34d399;">Ready to Wake</div>
+        <div class="mini-sub">No data lost</div>
+      </div>
+
+      <div class="bento-cell mini-card">
+        <div class="mini-label">Auto-Reconnect</div>
+        <div class="mini-val" id="timer">15s</div>
+        <div class="mini-sub">Countdown active</div>
+      </div>
+    </div>
+
+    <!-- Bottom Action Cell -->
+    <div class="bento-cell action-cell">
+      <button id="bentoBtn" class="btn-bento" onclick="refresh()">
+        <svg id="btnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+        <span id="btnLabel">Wake & Connect</span>
+      </button>
+
+      <div class="cf-row">
+        <div>quazaar-sync.codershubinc.com • Error 1033</div>
+        <div class="cf-box">
+          ::CLOUDFLARE_ERROR_1000S_BOX::
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let count = 15;
+    const timerText = document.getElementById('timer');
+    const bentoBtn = document.getElementById('bentoBtn');
+    const btnLabel = document.getElementById('btnLabel');
+
+    const interval = setInterval(() => {
+      count--;
+      if (count <= 0) {
+        clearInterval(interval);
+        refresh();
+      } else {
+        timerText.textContent = count + "s";
+      }
+    }, 1000);
+
+    function refresh() {
+      bentoBtn.classList.add('loading');
+      btnLabel.textContent = "Connecting...";
+      setTimeout(() => {
+        try { (window.top || window).location.reload(); } catch(e) { window.location.reload(); }
+      }, 350);
+    }
+  </script>
+</body>
+</html>

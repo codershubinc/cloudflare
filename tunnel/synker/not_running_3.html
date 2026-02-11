@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <noscript>
+    <meta http-equiv="refresh" content="15" />
+  </noscript>
+  <title>Quazaar Sync — Connection Status</title>
+  <style>
+    :root {
+      --bg: #090e17;
+      --card-bg: #111a28;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --green: #10b981;
+      --green-soft: rgba(16, 185, 129, 0.12);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      --blue: #2563eb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(ellipse at 50% 10%, rgba(37, 99, 235, 0.1) 0%, transparent 60%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      max-width: 480px;
+      width: 100%;
+      padding: 2.5rem 2rem 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Header */
+    .top-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--amber-soft);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--amber);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    /* 3-Step Friendly Tracker */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0.85rem 1rem;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .step-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-icon.ok {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .step-icon.waiting {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .step-info {
+      flex: 1;
+    }
+
+    .step-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 2px;
+    }
+
+    .step-state {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .step-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .badge-ok {
+      background: var(--green-soft);
+      color: #34d399;
+    }
+
+    .badge-wait {
+      background: var(--amber-soft);
+      color: #fbbf24;
+    }
+
+    /* Actions */
+    .action-panel {
+      text-align: center;
+    }
+
+    .btn-retry {
+      background: var(--blue);
+      color: #ffffff;
+      border: none;
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-retry:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .btn-retry.loading svg {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .auto-check {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-top: 0.75rem;
+    }
+
+    /* Footer */
+    .footer-area {
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .cf-box {
+      margin-top: 0.5rem;
+      font-family: ui-monospace, monospace;
+      font-size: 0.7rem;
+    }
+
+    .cf-box * {
+      color: inherit !important;
+      font-size: inherit !important;
+      background: transparent !important;
+      border: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="top-header">
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        Waking Up
+      </div>
+      <h1>Connecting to Quazaar Sync</h1>
+      <p class="subtitle">
+        Everything on your end is working normally. The service instance is currently waking up.
+      </p>
+    </div>
+
+    <!-- 3-Step Tracker -->
+    <div class="steps-list">
+      <!-- Step 1 -->
+      <div class="step-item">
+        <div class="step-icon ok">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <div class="step-info">
+          <div class="step-name">Your Connection</div>
+          <div class="step-state">Internet is active</div>
+        </div>
+        <span class="step-badge badge-ok">Ready</span>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-item">
+        <div class="step-icon ok">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <div class="step-info">
+          <div class="step-name">Cloudflare Edge</div>
+          <div class="step-state">Network gateway online</div>
+        </div>
+        <span class="step-badge badge-ok">Ready</span>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-item">
+        <div class="step-icon waiting">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"></path>
+          </svg>
+        </div>
+        <div class="step-info">
+          <div class="step-name">Quazaar Sync Host</div>
+          <div class="step-state">Spun down • Starting now</div>
+        </div>
+        <span class="step-badge badge-wait">Booting</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-panel">
+      <button id="checkBtn" class="btn-retry" onclick="recheck()">
+        <svg id="btnIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+        <span id="btnLabel">Recheck Status</span>
+      </button>
+
+      <div class="auto-check">
+        Auto-checking in <strong id="timer">15</strong>s
+      </div>
+    </div>
+
+    <!-- Quiet Edge Error Footer -->
+    <div class="footer-area">
+      <div>quazaar-sync.codershubinc.com • Status 1033</div>
+      <div class="cf-box">
+        ::CLOUDFLARE_ERROR_1000S_BOX::
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let remaining = 15;
+    const timerText = document.getElementById('timer');
+    const checkBtn = document.getElementById('checkBtn');
+    const btnLabel = document.getElementById('btnLabel');
+
+    const countdown = setInterval(() => {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(countdown);
+        recheck();
+      } else {
+        timerText.textContent = remaining;
+      }
+    }, 1000);
+
+    function recheck() {
+      checkBtn.classList.add('loading');
+      btnLabel.textContent = "Checking...";
+      setTimeout(() => {
+        try { (window.top || window).location.reload(); } catch(e) { window.location.reload(); }
+      }, 350);
+    }
+  </script>
+</body>
+</html>

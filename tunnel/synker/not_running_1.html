@@ -1,116 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="refresh" content="15" />
-  <title>503 // Tunnel Disconnected</title>
+  <noscript>
+    <meta http-equiv="refresh" content="15" />
+  </noscript>
+  <title>Quazaar Sync — Standby</title>
   <style>
+    :root {
+      --bg: #030712;
+      --card-bg: rgba(17, 24, 39, 0.65);
+      --border: rgba(255, 255, 255, 0.1);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-subtle: #4b5563;
+      --purple: #8b5cf6;
+      --purple-hover: #7c3aed;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background: #0d1117;
-      color: #c9d1d9;
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.15), transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08), transparent 50%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* Floating Island Capsule */
+    .island {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      max-width: 440px;
+      width: 100%;
+      padding: 2.25rem 2rem 1.75rem;
+      text-align: center;
+      box-shadow: 
+        0 30px 60px -12px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    }
+
+    /* Circular SVG Timer Ring */
+    .timer-ring-container {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 1.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 1rem;
     }
 
-    .terminal {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 10px;
-      max-width: 540px;
+    .timer-svg {
       width: 100%;
-      overflow: hidden;
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+      height: 100%;
+      transform: rotate(-90deg);
     }
 
-    .bar {
-      background: #21262d;
-      padding: 10px 16px;
+    .timer-circle-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.07);
+      stroke-width: 4;
+    }
+
+    .timer-circle-progress {
+      fill: none;
+      stroke: var(--purple);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 251.2;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    .timer-center-icon {
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
+      justify-content: center;
+      color: var(--purple);
+    }
+
+    .timer-center-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    /* Single Clean Pill CTA */
+    .pill-btn {
+      background: var(--purple);
+      color: #ffffff;
+      border: none;
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       gap: 8px;
-      border-bottom: 1px solid #30363d;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35);
     }
 
-    .circle {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
+    .pill-btn:hover {
+      background: var(--purple-hover);
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(139, 92, 246, 0.5);
     }
 
-    .r {
-      background: #ff5f56;
+    .pill-btn:active {
+      transform: scale(0.99);
     }
 
-    .y {
-      background: #ffbd2e;
+    .pill-btn.loading svg {
+      animation: spin 0.8s linear infinite;
     }
 
-    .g {
-      background: #27c93f;
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
-    .title {
-      margin-left: 8px;
-      font-size: 0.75rem;
-      color: #8b949e;
+    .auto-label {
+      color: var(--text-subtle);
+      font-size: 0.8rem;
+      margin-top: 0.85rem;
     }
 
-    .content {
-      padding: 1.5rem;
-      font-size: 0.88rem;
-      line-height: 1.7;
-    }
-
-    .cmd {
-      color: #58a6ff;
-    }
-
-    .err {
-      color: #f85149;
-      font-weight: bold;
-    }
-
-    .warn {
-      color: #d29922;
-    }
-
-    .muted {
-      color: #8b949e;
-      font-size: 0.78rem;
-      margin-top: 1.5rem;
-      border-top: 1px dashed #30363d;
+    /* Subdued Footer */
+    .footer-capsule {
+      margin-top: 1.75rem;
       padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.75rem;
+      color: var(--text-subtle);
+    }
+
+    .cf-box {
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+      color: #374151;
+      font-family: ui-monospace, monospace;
+    }
+
+    .cf-box * {
+      color: inherit !important;
+      font-size: inherit !important;
+      background: transparent !important;
+      border: none !important;
     }
   </style>
 </head>
-
 <body>
-  <div class="terminal">
-    <div class="bar">
-      <div class="circle r"></div>
-      <div class="circle y"></div>
-      <div class="circle g"></div>
-      <span class="title">cloudflared — quazaar-sync</span>
+  <div class="island">
+    <!-- Circular SVG Countdown Ring -->
+    <div class="timer-ring-container">
+      <svg class="timer-svg" viewBox="0 0 90 90">
+        <circle class="timer-circle-bg" cx="45" cy="45" r="40" />
+        <circle id="timerRing" class="timer-circle-progress" cx="45" cy="45" r="40" />
+      </svg>
+      <div class="timer-center-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+      </div>
     </div>
-    <div class="content">
-      <div><span class="cmd">$</span> curl -I https://quazaar-sync.codershubinc.com</div>
-      <div><span class="err">HTTP/2 1033 (Cloudflare Tunnel Error)</span></div>
-      <br />
-      <div><span class="warn">[WARN]</span> Upstream daemon is currently unreachable.</div>
-      <div>The host machine or tunnel service is offline. This page will automatically retry every 15 seconds.</div>
 
-      <div class="muted">
+    <h1>Quazaar Sync is Paused</h1>
+    <p>
+      The local instance is currently spun down or waking up. Your request will automatically continue in a moment.
+    </p>
+
+    <!-- Large Pill Button -->
+    <button id="refreshBtn" class="pill-btn" onclick="retry()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+      </svg>
+      <span id="btnLabel">Try Reconnecting</span>
+    </button>
+
+    <div class="auto-label">
+      Auto-refresh in <strong id="secondsText" style="color: var(--text-muted);">15</strong> seconds
+    </div>
+
+    <!-- Quiet Cloudflare Footer -->
+    <div class="footer-capsule">
+      <div>Quazaar Network • Status 1033</div>
+      <div class="cf-box">
         ::CLOUDFLARE_ERROR_1000S_BOX::
       </div>
     </div>
   </div>
-</body>
 
+  <script>
+    const TOTAL = 15;
+    let sec = TOTAL;
+    const ring = document.getElementById('timerRing');
+    const text = document.getElementById('secondsText');
+    const btn = document.getElementById('refreshBtn');
+    const btnLabel = document.getElementById('btnLabel');
+    const CIRCUMFERENCE = 2 * Math.PI * 40; // 251.32
+
+    ring.style.strokeDasharray = CIRCUMFERENCE;
+
+    const interval = setInterval(() => {
+      sec--;
+      if (sec <= 0) {
+        clearInterval(interval);
+        ring.style.strokeDashoffset = CIRCUMFERENCE;
+        retry();
+      } else {
+        text.textContent = sec;
+        const offset = CIRCUMFERENCE * (1 - sec / TOTAL);
+        ring.style.strokeDashoffset = offset;
+      }
+    }, 1000);
+
+    function retry() {
+      btn.classList.add('loading');
+      btnLabel.textContent = "Connecting...";
+      setTimeout(() => {
+        try { (window.top || window).location.reload(); } catch(e) { window.location.reload(); }
+      }, 350);
+    }
+  </script>
+</body>
 </html>
